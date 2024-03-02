@@ -52,6 +52,32 @@ const getAllParameters = async (req, res) => {
     }
 }
 
+const getAllParametersByState = async (req, res) => {
+    const { state_code } = req.params
+
+    const transaction = await sequelize.transaction();
+
+    try {
+        const parameters = await Parameter.findAll({
+            where: { state: state_code },
+        });
+
+        if (parameters.length === 0) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: `There are still no parameters with the state ${state_code}` });
+        }
+
+        res.status(200).json({ parameters: parameters });
+    } catch (error) {
+        console.log(error);
+
+        await transaction.rollback();
+
+        res.status(500).json({ msg: 'Server error' });
+    }
+}
+
 const updateStateParameter = async (req, res) => {
     const { id_parameter } = req.params;
     const { state } = req.body;
@@ -116,6 +142,7 @@ const deleteParameter = async (req, res) => {
 module.exports = {
     createParameter,
     getAllParameters,
+    getAllParametersByState,
     updateStateParameter,
     deleteParameter,
 };

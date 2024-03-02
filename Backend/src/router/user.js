@@ -13,4 +13,7 @@ module.exports = (app) => {
 
     //? POST
     router.post('/create', (req, res, next) => validations(req, res, next, regex));
+    
+    //? POST
+    router.post('/create', (req, res, next) => validations(req, res, next, regex));
 }

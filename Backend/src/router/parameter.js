@@ -4,6 +4,7 @@ const validationsBody = require('../middlewares/validationsBody');
 const {
     createParameter,
     getAllParameters,
+    getAllParametersByState,
     updateStateParameter,
     deleteParameter,
 } = require('../controllers/parameter');
@@ -37,7 +38,15 @@ module.exports = (app) => {
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
         ],
         getAllParameters
-    )
+    );
+
+    router.get(
+        '/:state_code',
+        [
+            (req, res, next) => validHeaders(req, res, next, 'Admin'),
+        ],
+        getAllParametersByState
+    );
 
     //? PUT
     router.put(

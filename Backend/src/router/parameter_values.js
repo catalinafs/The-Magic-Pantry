@@ -5,7 +5,8 @@ const {
     createValue,
     getAllValues,
     updateValueState,
-    deleteValue
+    deleteValue,
+    getAllValuesByState
 } = require('../controllers/parameter_values');
 
 module.exports = (app) => {
@@ -38,6 +39,14 @@ module.exports = (app) => {
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
         ],
         getAllValues
+    );
+
+    router.get(
+        '/:state_code',
+        [
+            (req, res, next) => validHeaders(req, res, next, 'Admin'),
+        ],
+        getAllValuesByState
     );
 
     //? PUT
