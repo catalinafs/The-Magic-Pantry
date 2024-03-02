@@ -8,6 +8,9 @@ dotenv.config();
 const { port } = require('./config');
 
 // Routes
+const userAPI = require('./router/user');
+const parameterAPI = require('./router/parameter');
+const parameter_valuesAPI = require('./router/parameter_values');
 
 // Constants
 const app = express();
@@ -16,6 +19,9 @@ const app = express();
 app.use(bodyParser.json());
 
 // App Routes
+userAPI(app);
+parameterAPI(app);
+parameter_valuesAPI(app);
 
 // Listening app
 app.listen(port, () => {
