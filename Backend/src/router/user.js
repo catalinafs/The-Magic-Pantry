@@ -1,9 +1,7 @@
 const express = require('express');
 const { validHeaders } = require('../middlewares/validationsHeader');
-const { validationsBody } = require('../middlewares/validationsBody');
+const { validationsBodyNotRequire } = require('../middlewares/validationsBody');
 const { deleteAccount, updateProfile } = require('../controllers/user');
-const jwt = require('jsonwebtoken');
-const { token_key } = require('../config');
 
 module.exports = (app) => {
     const router = express.Router();
@@ -21,7 +19,7 @@ module.exports = (app) => {
         '/profile',
         [
             (req, res, next) => validHeaders(req, res, next, ''),
-            (req, res, next) => validationsBody(req, res, next, regex_U_Profile, false)
+            (req, res, next) => validationsBodyNotRequire(req, res, next, regex_U_Profile)
         ],
         updateProfile
     );
@@ -35,9 +33,4 @@ module.exports = (app) => {
         ],
         deleteAccount
     );
-
-    router.get('/', (req, res) => {
-        const jwtcol = jwt.sign({ id: 1, role: 1 }, token_key);
-        res.json({ jwtcol });
-    })
 }

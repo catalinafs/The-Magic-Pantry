@@ -68,9 +68,18 @@ const login = async (req, res) => {
             role: userExist.role,
         }, token_key);
 
+        const userData = await User.findOne({
+            where: { id: userExist.id },
+            attributes: { exclude: ['password', 'state'] },
+            raw: true,
+        });
+
+        userData.role = userData.role === 1 ? 'Admin' : 'Client';
+
         res.status(200).json({
             msg: 'Access granted',
             access_token: encryptData,
+            user: userData,
         });
     } catch (error) {
         console.log(error);
