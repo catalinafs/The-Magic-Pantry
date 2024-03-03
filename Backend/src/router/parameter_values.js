@@ -1,6 +1,6 @@
 const express = require('express');
 const { validHeaders } = require('../middlewares/validationsHeader');
-const { validationsBody } = require('../middlewares/validationsBody');
+const { validationsBody, validationsBodyNotRequire } = require('../middlewares/validationsBody');
 const {
     createValue,
     getAllValues,
@@ -19,6 +19,8 @@ module.exports = (app) => {
     };
 
     const regex_U_Value = {
+        value: /^[a-zA-ZáéíóúüñÑ]+$/,
+        parameter_id: /^[0-9]+$/,
         state: /^[0-9]+$/,
     };
 
@@ -58,7 +60,7 @@ module.exports = (app) => {
         '/:id_value',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
-            (req, res, next) => validationsBody(req, res, next, regex_U_Value),
+            (req, res, next) => validationsBodyNotRequire(req, res, next, regex_U_Value),
         ],
         updateValueState
     );

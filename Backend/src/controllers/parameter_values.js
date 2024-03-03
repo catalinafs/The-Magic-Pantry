@@ -92,7 +92,7 @@ const getAllValuesByState = async (req, res) => {
 
 const updateValueState = async (req, res) => {
     const { id_value } = req.params;
-    const { state } = req.body;
+    const { value, parameter_id, state } = req.body;
 
     const transaction = await sequelize.transaction();
 
@@ -107,7 +107,24 @@ const updateValueState = async (req, res) => {
             return res.status(404).json({ msg: 'Value not found' });
         }
 
-        await Parameter_Values.update({ state: state }, { where: { id: id_value } });
+        const updateFields = {};
+
+        if (value) updateFields.value = value;
+        if (typeof parameter_id === 'number') {
+            const parameterExist = await Parameter.findOne({
+                where: { id: parameter_id },
+            });
+
+            if (!parameterExist) {
+                await transaction.rollback();
+                return res.status(404).json({ msg: `Parameter '${parameter_id}' not found` });
+            }
+
+            updateFields.parameter_id = parameter_id;
+        };
+        if (typeof state === 'number') updateFields.state = state;
+
+        await Parameter_Values.update(updateFields, { where: { id: id_value } });
 
         await transaction.commit();
 
