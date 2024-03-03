@@ -34,7 +34,9 @@ const getAllParameters = async (req, res) => {
     const transaction = await sequelize.transaction();
 
     try {
-        const parameters = await Parameter.findAll();
+        const parameters = await Parameter.findAll({
+            where: { state: 1 }
+        });
 
         if (parameters.length === 0) {
             await transaction.rollback();

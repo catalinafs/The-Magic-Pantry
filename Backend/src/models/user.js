@@ -8,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING(200),
             allowNull: false,
-            unique: true,
         },
         role: {
             type: DataTypes.BIGINT(20),
@@ -22,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         password: {
             type: DataTypes.STRING(500),
             allowNull: false,
+        },
+        state: {
+            type: DataTypes.BIGINT(20),
+            defaultValue: 1,
         },
     },
         {

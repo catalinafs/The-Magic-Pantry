@@ -8,7 +8,7 @@ dotenv.config();
 const { port } = require('./config');
 
 // Routes
-const userAPI = require('./router/user');
+const authAPI = require('./router/auth');
 const parameterAPI = require('./router/parameter');
 const parameter_valuesAPI = require('./router/parameter_values');
 
@@ -19,7 +19,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // App Routes
-userAPI(app);
+authAPI(app);
 parameterAPI(app);
 parameter_valuesAPI(app);
 
