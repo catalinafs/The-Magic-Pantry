@@ -10,6 +10,7 @@ const { port } = require('./config');
 // Routes
 const authAPI = require('./router/auth');
 const userAPI = require('./router/user');
+const productAPI = require('./router/product');
 const parameterAPI = require('./router/parameter');
 const parameter_valuesAPI = require('./router/parameter_values');
 
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 // App Routes
 authAPI(app);
 userAPI(app);
+productAPI(app);
 parameterAPI(app);
 parameter_valuesAPI(app);
 

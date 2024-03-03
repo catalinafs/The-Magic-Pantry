@@ -6,7 +6,8 @@ const {
     getAllValues,
     updateValueState,
     deleteValue,
-    getAllValuesByState
+    getAllValuesByState,
+    getAllValuesByParameterId
 } = require('../controllers/parameter_values');
 
 module.exports = (app) => {

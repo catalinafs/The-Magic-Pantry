@@ -25,7 +25,11 @@ module.exports = (sequelize, DataTypes) => {
         stock: {
             type: DataTypes.BIGINT(),
             allowNull: false,
-        }
+        },
+        state: {
+            type: DataTypes.TINYINT(4),
+            defaultValue: 1,
+        },
     },
         {
             updatedAt: false,
