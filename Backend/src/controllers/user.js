@@ -1,18 +1,33 @@
-const deleteUser = async (req, res) => {
-    const { user_id } = req.params;
+const { sequelize, User } = require("../models");
+
+const updateProfile = async (req, res) => {
+    const { id } = req.decode;
+
+    res.json({ id });
+    // const transaction = await sequelize.transaction();
+
+    // try {
+
+    // } catch (error) {
+
+    // }
+}
+
+const deleteAccount = async (req, res) => {
+    const { id } = req.decode;
 
     const transaction = await sequelize.transaction();
 
     try {
         const userExist = await User.findOne({
-            where: { id: user_id },
+            where: { id: id },
         });
 
         if (!userExist) {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        await User.update({ state: 0 }, { where: { id: user_id } });
+        await User.update({ state: 1 }, { where: { id: id } });
 
         await transaction.commit();
 
@@ -27,5 +42,6 @@ const deleteUser = async (req, res) => {
 }
 
 module.exports = {
-    deleteUser,
+    updateProfile,
+    deleteAccount,
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const { validHeaders } = require('../middlewares/validationsHeader');
-const validationsBody = require('../middlewares/validationsBody');
+const { validationsBody } = require('../middlewares/validationsBody');
 const {
     createValue,
     getAllValues,
@@ -23,6 +23,7 @@ module.exports = (app) => {
     };
 
     //? POST
+    //* create value
     router.post(
         '/create',
         [
@@ -33,6 +34,7 @@ module.exports = (app) => {
     );
 
     //? GET
+    //* bring all existing values
     router.get(
         '/',
         [
@@ -41,6 +43,7 @@ module.exports = (app) => {
         getAllValues
     );
 
+    //* bring all values by status code
     router.get(
         '/:state_code',
         [
@@ -50,6 +53,7 @@ module.exports = (app) => {
     );
 
     //? PUT
+    //* update value status code
     router.put(
         '/:id_value',
         [
@@ -60,6 +64,7 @@ module.exports = (app) => {
     );
 
     //? DELETE
+    //* delete value
     router.delete(
         '/:id_value',
         [

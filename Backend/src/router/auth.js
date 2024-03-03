@@ -1,9 +1,6 @@
 const express = require('express');
-const { validHeaders } = require('../middlewares/validationsHeader');
-const validationsBody = require('../middlewares/validationsBody');
-const {
-    register, login,
-} = require('../controllers/auth');
+const { validationsBody } = require('../middlewares/validationsBody');
+const { register, login } = require('../controllers/auth');
 
 module.exports = (app) => {
     const router = express.Router();
@@ -22,6 +19,7 @@ module.exports = (app) => {
     };
 
     //? POST
+    //* register user
     router.post(
         '/register',
         [
@@ -30,6 +28,7 @@ module.exports = (app) => {
         register
     );
 
+    //* login user
     router.post(
         '/login',
         [

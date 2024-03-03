@@ -1,6 +1,6 @@
 const express = require('express');
 const { validHeaders } = require('../middlewares/validationsHeader');
-const validationsBody = require('../middlewares/validationsBody');
+const { validationsBody, validationsBodyNotRequire } = require('../middlewares/validationsBody');
 const {
     createParameter,
     getAllParameters,
@@ -16,12 +16,14 @@ module.exports = (app) => {
     const regex_C_Parameter = {
         parameter_name: /^[a-zA-ZáéíóúüñÑ]+$/,
     };
-
+    
     const regex_U_Parameter = {
+        parameter_name: /^[a-zA-ZáéíóúüñÑ]+$/,
         state: /^[0-9]+$/,
     };
 
     //? POST
+    //* create parameter
     router.post(
         '/create',
         [
@@ -32,6 +34,7 @@ module.exports = (app) => {
     );
 
     //? GET
+    //* bring all existing parameters
     router.get(
         '/',
         [
@@ -40,6 +43,7 @@ module.exports = (app) => {
         getAllParameters
     );
 
+    //* bring all parameters by state code
     router.get(
         '/:state_code',
         [
@@ -49,16 +53,18 @@ module.exports = (app) => {
     );
 
     //? PUT
+    //* update parameter status code
     router.put(
         '/updateState/:id_parameter',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
-            (req, res, next) => validationsBody(req, res, next, regex_U_Parameter),
+            (req, res, next) => validationsBodyNotRequire(req, res, next, regex_U_Parameter),
         ],
         updateStateParameter
     );
 
     //? DELETE
+    //* delete parameter
     router.delete(
         '/:id_parameter',
         [
