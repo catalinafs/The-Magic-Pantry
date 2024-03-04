@@ -1,4 +1,5 @@
 const { encryptPass } = require("../helpers/bcryptPass");
+const { userExists } = require("../helpers/userExist");
 const { sequelize, User } = require("../models");
 
 const updateProfile = async (req, res) => {
@@ -8,12 +9,10 @@ const updateProfile = async (req, res) => {
     const transaction = await sequelize.transaction();
 
     try {
-        const userExist = await User.findOne({
-            where: { id: id },
-        });
-
+        const userExist = await userExists(id);
         if (!userExist) {
             await transaction.rollback();
+
             return res.status(404).json({ msg: 'User not found' });
         }
 
@@ -64,11 +63,10 @@ const deleteAccount = async (req, res) => {
     const transaction = await sequelize.transaction();
 
     try {
-        const userExist = await User.findOne({
-            where: { id: id },
-        });
-
+        const userExist = await userExists(id);
         if (!userExist) {
+            await transaction.rollback();
+
             return res.status(404).json({ msg: 'User not found' });
         }
 

@@ -11,6 +11,7 @@ const { port } = require('./config');
 const authAPI = require('./router/auth');
 const userAPI = require('./router/user');
 const productAPI = require('./router/product');
+const billAPI = require('./router/bill');
 const parameterAPI = require('./router/parameter');
 const parameter_valuesAPI = require('./router/parameter_values');
 
@@ -24,6 +25,7 @@ app.use(bodyParser.json());
 authAPI(app);
 userAPI(app);
 productAPI(app);
+billAPI(app);
 parameterAPI(app);
 parameter_valuesAPI(app);
 

@@ -64,7 +64,7 @@ const login = async (req, res) => {
         }
 
         const encryptData = jwt.sign({
-            id_user: userExist.id,
+            id: userExist.id,
             role: userExist.role,
         }, token_key);
 

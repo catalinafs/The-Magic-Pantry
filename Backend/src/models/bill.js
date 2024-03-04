@@ -3,9 +3,14 @@ module.exports = (sequelize, DataTypes) => {
         id: {
             type: DataTypes.BIGINT(20),
             primaryKey: true,
+            autoIncrement: true,
         },
         id_client: {
             type: DataTypes.BIGINT(20),
+            allowNull: false,
+        },
+        total_products: {
+            type: DataTypes.BIGINT(),
             allowNull: false,
         },
         total_price: {

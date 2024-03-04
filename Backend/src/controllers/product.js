@@ -1,7 +1,14 @@
+const { userExists } = require('../helpers/userExist');
 const { sequelize, Product, Parameter_Values } = require('../models');
 
 const getProductTypes = async (req, res) => {
+    const { id } = req.decode;
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const product_types = await Parameter_Values.findAll({
             where: { parameter_id: 2, state: 1 },
             attributes: { exclude: ['parameter_id', 'state'] },
@@ -20,7 +27,14 @@ const getProductTypes = async (req, res) => {
 }
 
 const getAllProducts = async (req, res) => {
+    const { id } = req.decode;
+
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const products = await Product.findAll({
             where: { state: 1 },
             attributes: { exclude: ['state'] },
@@ -39,9 +53,15 @@ const getAllProducts = async (req, res) => {
 }
 
 const getProductById = async (req, res) => {
+    const { id } = req.decode;
     const { product_id } = req.params;
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const productData = await Product.findOne({
             where: { id: product_id, state: 1 },
             attributes: { exclude: ['state'] },
@@ -60,11 +80,19 @@ const getProductById = async (req, res) => {
 }
 
 const createProduct = async (req, res) => {
+    const { id } = req.decode;
     const { name, description, price, pv_product_type, stock } = req.body;
 
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const productExist = await Product.findOne({
             where: { name: name },
         });
@@ -118,12 +146,20 @@ const createProduct = async (req, res) => {
 }
 
 const updateProduct = async (req, res) => {
+    const { id } = req.decode;
     const { product_id } = req.params;
     const { name, description, price, pv_product_type, stock } = req.body;
 
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const productExist = await Product.findOne({
             where: { id: product_id, state: 1 },
         });
@@ -167,11 +203,19 @@ const updateProduct = async (req, res) => {
 }
 
 const deleteProduct = async (req, res) => {
+    const { id } = req.decode;
     const { product_id } = req.params;
 
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const productExist = await Product.findOne({
             where: { id: product_id },
         });

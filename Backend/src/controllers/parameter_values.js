@@ -1,11 +1,20 @@
+const { userExists } = require("../helpers/userExist");
 const { sequelize, Parameter_Values, Parameter } = require("../models");
 
 const createValue = async (req, res) => {
+    const { id } = req.decode;
     const { value, parameter_id } = req.body;
 
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const parameterExist = await Parameter.findOne({
             where: { id: parameter_id },
         });
@@ -41,9 +50,18 @@ const createValue = async (req, res) => {
 }
 
 const getAllValues = async (req, res) => {
+    const { id } = req.decode;
+
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const values = await Parameter_Values.findAll({
             where: { state: 1 },
         });
@@ -65,11 +83,19 @@ const getAllValues = async (req, res) => {
 }
 
 const getAllValuesByState = async (req, res) => {
+    const { id } = req.decode;
     const { state_code } = req.params
 
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const values = await Parameter_Values.findAll({
             where: { state: state_code },
         });
@@ -91,12 +117,20 @@ const getAllValuesByState = async (req, res) => {
 }
 
 const updateValueState = async (req, res) => {
+    const { id } = req.decode;
     const { id_value } = req.params;
     const { value, parameter_id, state } = req.body;
 
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const valueExist = await Parameter_Values.findOne({
             where: { id: id_value },
         });
@@ -139,11 +173,19 @@ const updateValueState = async (req, res) => {
 }
 
 const deleteValue = async (req, res) => {
+    const { id } = req.decode;
     const { id_value } = req.params;
 
     const transaction = await sequelize.transaction();
 
     try {
+        const userExist = await userExists(id);
+        if (!userExist) {
+            await transaction.rollback();
+
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
         const valueExist = await Parameter_Values.findOne({
             where: { id: id_value },
         });
