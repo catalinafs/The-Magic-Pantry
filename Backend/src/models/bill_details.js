@@ -20,12 +20,10 @@ module.exports = (sequelize, DataTypes) => {
     Bill_Details.associate = (models) => {
         Bill_Details.belongsTo(models.Bill, {
             foreignKey: 'id_bill',
-            as: 'bills',
         });
 
         Bill_Details.belongsTo(models.Product, {
             foreignKey: 'id_product',
-            as: 'products',
         });
     };
 

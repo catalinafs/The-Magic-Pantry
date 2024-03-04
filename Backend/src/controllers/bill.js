@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 const { updateStock } = require("../helpers/updateStock");
-const { sequelize, Bill, Product, User, Bill_Details } = require("../models");
+const { sequelize, Bill, Product, Bill_Details } = require("../models");
 const { userExists } = require("../helpers/userExist");
 
 const createBill = async (req, res) => {
@@ -29,13 +29,13 @@ const createBill = async (req, res) => {
         const productsMap = {};
         let productsCount = 0;
 
-        for (const product of products) {
+        for (const productId of products) {
             const productExisting = await Product.findOne({
-                where: { id: product.id, state: 1, stock: { [Op.gt]: 0, } }
+                where: { id: productId, state: 1, stock: { [Op.gt]: 0 } }
             });
 
             if (productExisting) {
-                await updateStock(productExisting.id);
+                await updateStock(productId);
                 productsMap[productsCount] = productExisting;
                 productsCount++;
             }
@@ -55,14 +55,14 @@ const createBill = async (req, res) => {
 
         const newBill = await Bill.create({
             id_client: id,
-            total_products: products.length,
+            total_products: productsCount,
             total_price,
         });
 
         // Create bill details based on products
         const billDetails = products.map((product) => ({
             id_bill: newBill.id,
-            id_product: product.id,
+            id_product: product,
         }));
 
         await Bill_Details.bulkCreate(billDetails);
@@ -82,22 +82,25 @@ const createBill = async (req, res) => {
 const getAllBillsByclient = async (req, res) => {
     const { id } = req.decode;
 
-    const transaction = await sequelize.transaction();
-
     try {
         // Check user existence
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        res.status(200).json({ msg: 'Endpoint en proceso' });
+        // Brings all client bills
+        const bills = await Bill.findAll({
+            where: { id_client: id },
+        });
+
+        if (!bills || bills.length === 0) {
+            return res.status(404).json({ msg: 'The customer has not made any purchases so far' });
+        }
+
+        res.status(200).json({ bills });
     } catch (error) {
         console.log(error);
-
-        await transaction.rollback();
 
         res.status(500).json({ msg: 'Server error' });
     }
@@ -105,23 +108,39 @@ const getAllBillsByclient = async (req, res) => {
 
 const getBillByclient = async (req, res) => {
     const { id } = req.decode;
-
-    const transaction = await sequelize.transaction();
+    const { bill_id } = req.params;
 
     try {
         // Check user existence
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        res.status(200).json({ msg: 'Endpoint en proceso' });
+        // Brings Bill Details By Client ID and Bill ID
+        const bills = await Bill.findOne({
+            where: { id_client: id, id: bill_id },
+            include: [
+                {
+                    model: Bill_Details,
+                    attributes: { exclude: ['id_bill', 'id_product'] },
+                    include: [
+                        {
+                            model: Product,
+                            attributes: ['id', 'name', 'price'],
+                        },
+                    ],
+                },
+            ],
+        });
+
+        if (!bills) {
+            return res.status(404).json({ msg: 'The customer has not made any purchases so far' });
+        }
+
+        res.status(200).json({ bill: bills });
     } catch (error) {
         console.log(error);
-
-        await transaction.rollback();
 
         res.status(500).json({ msg: 'Server error' });
     }
@@ -130,22 +149,23 @@ const getBillByclient = async (req, res) => {
 const getAllBills = async (req, res) => {
     const { id } = req.decode;
 
-    const transaction = await sequelize.transaction();
-
     try {
         // Check user existence
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        res.status(200).json({ msg: 'Endpoint en proceso' });
+        // Brings all client bills
+        const bills = await Bill.findAll();
+
+        if (!bills || bills.length === 0) {
+            return res.status(404).json({ msg: 'No invoices have been made so far' });
+        }
+
+        res.status(200).json({ bills });
     } catch (error) {
         console.log(error);
-
-        await transaction.rollback();
 
         res.status(500).json({ msg: 'Server error' });
     }
@@ -153,23 +173,39 @@ const getAllBills = async (req, res) => {
 
 const getBillById = async (req, res) => {
     const { id } = req.decode;
-
-    const transaction = await sequelize.transaction();
+    const { bill_id } = req.params;
 
     try {
         // Check user existence
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        res.status(200).json({ msg: 'Endpoint en proceso' });
+        // Brings Bill Details By Bill ID
+        const bills = await Bill.findOne({
+            where: { id: bill_id },
+            include: [
+                {
+                    model: Bill_Details,
+                    attributes: { exclude: ['id_bill', 'id_product'] },
+                    include: [
+                        {
+                            model: Product,
+                            attributes: ['id', 'name', 'price'],
+                        },
+                    ],
+                },
+            ],
+        });
+
+        if (!bills) {
+            return res.status(404).json({ msg: 'Bill not found' });
+        }
+
+        res.status(200).json({ bill: bills });
     } catch (error) {
         console.log(error);
-
-        await transaction.rollback();
 
         res.status(500).json({ msg: 'Server error' });
     }

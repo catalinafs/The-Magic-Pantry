@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     Parameter.associate = (models) => {
         Parameter.hasMany(models.Parameter_Values, {
             foreignKey: 'parameter_id',
-            as: 'values_parameters',
         });
     };
 

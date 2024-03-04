@@ -1,7 +1,13 @@
 const express = require('express');
 const { validHeaders } = require('../middlewares/validationsHeader');
 const { validateNewBill } = require('../middlewares/validateNewBill');
-const { createBill, getAllBillsByclient, getBillByclient, getAllBills, getBillById } = require('../controllers/bill');
+const {
+    createBill,
+    getAllBillsByclient,
+    getBillByclient,
+    getAllBills,
+    getBillById
+} = require('../controllers/bill');
 
 module.exports = (app) => {
     const router = express.Router();

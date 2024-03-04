@@ -28,12 +28,10 @@ module.exports = (sequelize, DataTypes) => {
     Bill.associate = (models) => {
         Bill.belongsTo(models.User, {
             foreignKey: 'id_client',
-            as: 'clients',
         });
 
         Bill.hasMany(models.Bill_Details, {
             foreignKey: 'id_bill',
-            as: 'details_bills',
         });
     };
 

@@ -30,7 +30,6 @@ module.exports = (sequelize, DataTypes) => {
     Parameter_Values.associate = (models) => {
         Parameter_Values.belongsTo(models.Parameter, {
             foreignKey: 'parameter_id',
-            as: 'parameters',
         });
     };
 
