@@ -29,8 +29,6 @@ const validHeaders = (req, res, next, userType) => {
 
                     break;
 
-                default:
-                    break;
             }
 
             req.decode = decode;
