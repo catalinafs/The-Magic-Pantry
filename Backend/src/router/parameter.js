@@ -36,7 +36,7 @@ module.exports = (app) => {
     //? GET
     //* bring all existing parameters
     router.get(
-        '/',
+        '/all',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
         ],
