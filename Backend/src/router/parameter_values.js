@@ -7,7 +7,6 @@ const {
     updateValueState,
     deleteValue,
     getAllValuesByState,
-    getAllValuesByParameterId
 } = require('../controllers/parameter_values');
 
 module.exports = (app) => {
@@ -39,7 +38,7 @@ module.exports = (app) => {
     //? GET
     //* bring all existing values
     router.get(
-        '/',
+        '/all',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
         ],
@@ -48,7 +47,7 @@ module.exports = (app) => {
 
     //* bring all values by status code
     router.get(
-        '/:state_code',
+        '/state/:state_code',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
         ],
@@ -58,7 +57,7 @@ module.exports = (app) => {
     //? PUT
     //* update value status code
     router.put(
-        '/:id_value',
+        '/stateUp/:id_value',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
             (req, res, next) => validationsBodyNotRequire(req, res, next, regex_U_Value),
