@@ -4,9 +4,9 @@ const { validationsBody, validationsBodyNotRequire } = require('../middlewares/v
 const {
     createValue,
     getAllValues,
-    updateValueState,
     deleteValue,
     getAllValuesByState,
+    updateValue,
 } = require('../controllers/parameter_values');
 
 module.exports = (app) => {
@@ -55,14 +55,14 @@ module.exports = (app) => {
     );
 
     //? PUT
-    //* update value status code
+    //* update value
     router.put(
         '/stateUp/:id_value',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
             (req, res, next) => validationsBodyNotRequire(req, res, next, regex_U_Value),
         ],
-        updateValueState
+        updateValue
     );
 
     //? DELETE

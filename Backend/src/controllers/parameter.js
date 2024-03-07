@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { userExists } = require("../helpers/userExist");
 const { Parameter, sequelize } = require("../models");
 
@@ -42,13 +43,9 @@ const createParameter = async (req, res) => {
 const getAllParameters = async (req, res) => {
     const { id } = req.decode;
 
-    const transaction = await sequelize.transaction();
-
     try {
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
@@ -57,16 +54,12 @@ const getAllParameters = async (req, res) => {
         });
 
         if (parameters.length === 0) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'There are no parameters yet' });
         }
 
         res.status(200).json({ parameters: parameters });
     } catch (error) {
         console.log(error);
-
-        await transaction.rollback();
 
         res.status(500).json({ msg: 'Server error' });
     }
@@ -76,13 +69,9 @@ const getAllParametersByState = async (req, res) => {
     const { id } = req.decode;
     const { state_code } = req.params
 
-    const transaction = await sequelize.transaction();
-
     try {
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
@@ -91,8 +80,6 @@ const getAllParametersByState = async (req, res) => {
         });
 
         if (parameters.length === 0) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: `There are still no parameters with the state ${state_code}` });
         }
 
@@ -100,13 +87,11 @@ const getAllParametersByState = async (req, res) => {
     } catch (error) {
         console.log(error);
 
-        await transaction.rollback();
-
         res.status(500).json({ msg: 'Server error' });
     }
 }
 
-const updateStateParameter = async (req, res) => {
+const updateParameter = async (req, res) => {
     const { id } = req.decode;
     const { id_parameter } = req.params;
     const { parameter_name, state } = req.body;
@@ -139,7 +124,7 @@ const updateStateParameter = async (req, res) => {
 
         await transaction.commit();
 
-        res.json({ msg: 'Parameter updated correctly' });
+        res.status(200).json({ msg: 'Parameter updated correctly' });
     } catch (error) {
         console.log(error);
 
@@ -164,7 +149,7 @@ const deleteParameter = async (req, res) => {
         }
 
         const parameterExist = await Parameter.findOne({
-            where: { id: id_parameter },
+            where: { id: id_parameter, state: { [Op.ne]: 0, } },
         });
 
         if (!parameterExist) {
@@ -191,6 +176,6 @@ module.exports = {
     createParameter,
     getAllParameters,
     getAllParametersByState,
-    updateStateParameter,
+    updateParameter,
     deleteParameter,
 };

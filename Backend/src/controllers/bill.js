@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const { updateStock } = require("../helpers/updateStock");
 const { sequelize, Bill, Product, Bill_Details } = require("../models");
 const { userExists } = require("../helpers/userExist");
@@ -31,10 +30,15 @@ const createBill = async (req, res) => {
 
         for (const productId of products) {
             const productExisting = await Product.findOne({
-                where: { id: productId, state: 1, stock: { [Op.gt]: 0 } }
+                where: { id: productId, state: 1 }
             });
 
             if (productExisting) {
+                if (productExisting.stock <= 0) {
+                    await transaction.rollback();
+
+                    return res.status(404).json({ msg: 'There is no stock available for this product' });
+                }
                 await updateStock(productId);
                 productsMap[productsCount] = productExisting;
                 productsCount++;

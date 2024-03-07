@@ -3,6 +3,7 @@ const { sequelize, Product, Parameter_Values } = require('../models');
 
 const getProductTypes = async (req, res) => {
     const { id } = req.decode;
+    
     try {
         const userExist = await userExists(id);
         if (!userExist) {

@@ -52,13 +52,9 @@ const createValue = async (req, res) => {
 const getAllValues = async (req, res) => {
     const { id } = req.decode;
 
-    const transaction = await sequelize.transaction();
-
     try {
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
@@ -67,16 +63,12 @@ const getAllValues = async (req, res) => {
         });
 
         if (values.length === 0) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'There are no values yet' });
         }
 
         res.status(200).json({ values: values });
     } catch (error) {
         console.log(error);
-
-        await transaction.rollback();
 
         res.status(500).json({ msg: 'Server error' });
     }
@@ -86,13 +78,9 @@ const getAllValuesByState = async (req, res) => {
     const { id } = req.decode;
     const { state_code } = req.params
 
-    const transaction = await sequelize.transaction();
-
     try {
         const userExist = await userExists(id);
         if (!userExist) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: 'User not found' });
         }
 
@@ -101,8 +89,6 @@ const getAllValuesByState = async (req, res) => {
         });
 
         if (values.length === 0) {
-            await transaction.rollback();
-
             return res.status(404).json({ msg: `There are still no values with the state ${state_code}` });
         }
 
@@ -110,13 +96,11 @@ const getAllValuesByState = async (req, res) => {
     } catch (error) {
         console.log(error);
 
-        await transaction.rollback();
-
         res.status(500).json({ msg: 'Server error' });
     }
 }
 
-const updateValueState = async (req, res) => {
+const updateValue = async (req, res) => {
     const { id } = req.decode;
     const { id_value } = req.params;
     const { value, parameter_id, state } = req.body;
@@ -187,7 +171,7 @@ const deleteValue = async (req, res) => {
         }
 
         const valueExist = await Parameter_Values.findOne({
-            where: { id: id_value },
+            where: { id: id_value, state: { [Op.ne]: 0, } },
         });
 
         if (!valueExist) {
@@ -214,6 +198,6 @@ module.exports = {
     createValue,
     getAllValues,
     getAllValuesByState,
-    updateValueState,
+    updateValue,
     deleteValue,
 };

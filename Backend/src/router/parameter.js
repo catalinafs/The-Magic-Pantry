@@ -5,8 +5,8 @@ const {
     createParameter,
     getAllParameters,
     getAllParametersByState,
-    updateStateParameter,
     deleteParameter,
+    updateParameter,
 } = require('../controllers/parameter');
 
 module.exports = (app) => {
@@ -53,14 +53,14 @@ module.exports = (app) => {
     );
 
     //? PUT
-    //* update parameter status code
+    //* update parameter
     router.put(
         '/updateState/:id_parameter',
         [
             (req, res, next) => validHeaders(req, res, next, 'Admin'),
             (req, res, next) => validationsBodyNotRequire(req, res, next, regex_U_Parameter),
         ],
-        updateStateParameter
+        updateParameter
     );
 
     //? DELETE
