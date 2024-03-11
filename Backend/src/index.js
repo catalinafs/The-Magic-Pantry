@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 // Config
 dotenv.config();
@@ -20,6 +21,7 @@ const app = express();
 
 // App Use
 app.use(bodyParser.json());
+app.use(cors());
 
 // App Routes
 authAPI(app);
