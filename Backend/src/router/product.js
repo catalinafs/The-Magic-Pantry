@@ -35,7 +35,7 @@ module.exports = (app) => {
     router.get(
         '/types',
         [
-            (req, res, next) => validHeaders(req, res, next, 'Client'),
+            (req, res, next) => validHeaders(req, res, next, ''),
         ],
         getProductTypes
     );
